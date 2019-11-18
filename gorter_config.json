@@ -1,0 +1,13 @@
+{
+    "Directories": [
+        {"name": "Audio", "ext": [".mp3", ".wav", ".flac", ".ogg"]},
+        {"name": "Books", "ext": [".epub", ".mobi"]},
+        {"name": "Images", "ext": [".png", ".gif", ".jpg", ".jpeg"]},
+        {"name": "Video", "ext": [".mp4", ".webm", ".mkv"]},
+        {"name": "Guitar Tabs", "ext": [".tg", ".gp3", "gp4", ".gp5", ".gpx"]},
+        {"name": "Documents", "ext": [".txt", ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx"]},
+        {"name": "Disk Images", "ext": [".iso"]},
+        {"name": "Archives", "ext": [".zip", ".rar", ".7z", ".tar", ".tar.xz", ".tar.gz"]},
+        {"name": "Torrent files", "ext": [".torrent"]}
+    ]
+}
