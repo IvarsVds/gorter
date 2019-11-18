@@ -38,11 +38,13 @@ func main() {
 				log.Fatal("Input directory doesn't exist")
 			}
 
-			if _, err := os.Stat(outDir); os.IsNotExist(err) {
-				// if outDir doesn't exist, attempt to create it
-				err := os.Mkdir(outDir, os.ModePerm)
-				if err != nil {
-					log.Fatal(err)
+			if outDir != "" {
+				if _, err := os.Stat(outDir); os.IsNotExist(err) {
+					// if outDir doesn't exist, attempt to create it
+					err := os.Mkdir(outDir, os.ModePerm)
+					if err != nil {
+						log.Fatal(err)
+					}
 				}
 			}
 
