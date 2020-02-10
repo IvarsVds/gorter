@@ -101,5 +101,5 @@ func main() {
 		}
 	}
 	// make some folder resolutions, so it doesn't print out .
-	fmt.Printf("Files within %s sorted!", inputDir)
+	fmt.Printf("Files within %s sorted!\n", inputDir)
 }
