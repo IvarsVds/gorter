@@ -1,104 +1,105 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-
-	"github.com/urfave/cli"
 )
 
+var inputDir string
+var outputDir string
+
+const (
+	inputUsage  string = "directory containing sortable files"
+	outputUsage string = "directory where to create directories / place files"
+)
+
+func init() {
+	flag.StringVar(&inputDir, "i", "", inputUsage+" (shorthand)")
+	flag.StringVar(&inputDir, "inputdir", "", inputUsage)
+	flag.StringVar(&outputDir, "o", "", outputUsage+" (shorthand)")
+	flag.StringVar(&outputDir, "outputdir", "", outputUsage)
+}
+
 func main() {
-	app := &cli.App{
-		Name:    "gorter",
-		Version: "1.0.0",
-		Authors: []*cli.Author{
-			&cli.Author{
-				Name:  "Ivars Veidelis",
-				Email: "ivars.veidelis@protonmail.com",
-			},
-		},
-		Usage:                "Sort and organize files in directories",
-		EnableBashCompletion: true,
-		Action: func(c *cli.Context) error {
-			var inputDir string
-			var outDir string
+	flag.Parse()
+	// take first argument as input and output dir
+	// shortuct for lazy people aka me
+	if flag.NArg() > 0 {
+		if inputDir == "" {
+			inputDir = flag.Args()[0]
+		}
+	}
 
-			if c.NArg() > 0 {
-				inputDir = c.Args().Get(0)
-				outDir = c.Args().Get(1)
-			} else {
-				log.Fatal("No input directory specified")
-			}
+	if inputDir == "" {
+		log.Fatal("No input directory specified")
+	}
 
-			// check if inputDir and outDir exist on disk
-			if _, err := os.Stat(inputDir); os.IsNotExist(err) {
-				log.Fatal("Input directory doesn't exist")
-			}
+	// check if inputDir & outputDir exist on disk
+	if _, err := os.Stat(inputDir); os.IsNotExist(err) {
+		log.Fatal("Input direcotry doesn't exist")
+	}
 
-			if outDir != "" {
-				if _, err := os.Stat(outDir); os.IsNotExist(err) {
-					// if outDir doesn't exist, attempt to create it
-					err := os.Mkdir(outDir, os.ModePerm)
-					if err != nil {
-						log.Fatal(err)
-					}
-				}
-			}
-
-			config := loadConfig()
-
-			files, err := ioutil.ReadDir(inputDir)
+	if outputDir != "" {
+		if _, err := os.Stat(outputDir); os.IsNotExist(err) {
+			// if outputDir doesn't exist on the disk, attempt to create it
+			err := os.Mkdir(outputDir, os.ModePerm)
 			if err != nil {
 				log.Fatal(err)
 			}
-
-			var workDir string
-			var outPath string
-
-			// refactor this for max efficiency
-			for _, directory := range config.Directories {
-				if len(outDir) > 0 {
-					workDir = outDir
-					outPath = filepath.Join(outDir, directory.Name)
-				} else {
-					workDir = inputDir
-					outPath = filepath.Join(inputDir, directory.Name)
-				}
-
-				err := os.Mkdir(outPath, os.ModePerm)
-				if err != nil {
-					//fmt.Println(err)
-				}
-
-				for _, filename := range files {
-					for _, ext := range directory.Ext {
-						// check for file extension match
-						if filename.IsDir() == false {
-							fname := filename.Name()
-							sInd := len(fname) - len(ext)
-							if fname[sInd:] == ext {
-								err := os.Rename(filepath.Join(workDir, fname), filepath.Join(outPath, fname))
-								if err != nil {
-									log.Fatal(err)
-								}
-
-								break
-							}
-						}
-					}
-				}
-
-			}
-			fmt.Println("Files within", inputDir, "sorted!")
-			return nil
-		},
+		}
 	}
 
-	err := app.Run(os.Args)
+	config := loadConfig()
+
+	files, err := ioutil.ReadDir(inputDir)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// sorting
+	for _, dir := range config.Directories {
+		// set working path which contains files to sort
+		var wk string
+		if outputDir != "" {
+			wk = outputDir
+		} else {
+			wk = inputDir
+		}
+		od := filepath.Join(wk, dir.Name)
+
+		// create directory where to place sorted files
+		_ = os.Mkdir(od, os.ModePerm)
+
+		for _, filename := range files {
+			for _, ext := range dir.Ext {
+				if filename.IsDir() {
+					continue
+				}
+
+				fn := filename.Name()
+				si := len(fn) - len(ext)
+				// check if slice bounds are out of range
+				if si <= 0 {
+					continue
+				}
+
+				fext := fn[si:]
+				if fext != ext {
+					continue
+				}
+				// if file ext matches, move the file
+				err := os.Rename(filepath.Join(wk, fn), filepath.Join(od, fn))
+				if err != nil {
+					log.Fatal(err)
+				}
+				break
+			}
+		}
+	}
+	// make some folder resolutions, so it doesn't print out .
+	fmt.Printf("Files within %s sorted!", inputDir)
 }

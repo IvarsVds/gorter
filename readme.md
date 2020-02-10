@@ -1,7 +1,7 @@
-# Gorter
-Gorter is CLI utility for sorting files. It solves a basic need of mine - keep downloads folder tidy. I think many can relate. 
-Gorter aims to be user customizable with usage of configuration file, in which user can define directory names and file types,
-that will be placed in said directory.
+# Gorter version 2.0
+Gorter is CLI utility for sorting files. It solves a basic need of mine - keeping my home directory (and it's sub directories) organized.  
+Gorter aims to be customizable - users can edit configuration file and define directory names and file types,
+that will be placed in those directories.
 
 # Instalation
 
@@ -22,6 +22,10 @@ Gorter also can read config file from the same directory it's placed in.
 # Using Gorter
 
 ```
-gorter input_dir output_dir(optional)
+gorter -i /nameof/input/directory -o /nameof/output/directory (this is optional)
 ```
-If output directory is omitted, sorted files will be placed in directories within input directory.
+If output directory is omitted, sorted files will be placed in directories within input directory.  
+If you omit output directory, you can use even shorter command
+```
+gorter /nameof/input/directory 
+```
