@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -35,12 +34,14 @@ func main() {
 	}
 
 	if inputDir == "" {
-		log.Fatal("No input directory specified")
+		fmt.Println("No input directory specified")
+		os.Exit(1)
 	}
 
 	// check if inputDir & outputDir exist on disk
 	if _, err := os.Stat(inputDir); os.IsNotExist(err) {
-		log.Fatal("Input direcotry doesn't exist")
+		fmt.Println("Input direcotry doesn't exist")
+		os.Exit(1)
 	}
 
 	if outputDir != "" {
@@ -48,7 +49,8 @@ func main() {
 			// if outputDir doesn't exist on the disk, attempt to create it
 			err := os.Mkdir(outputDir, os.ModePerm)
 			if err != nil {
-				log.Fatal(err)
+				fmt.Println(err)
+				os.Exit(1)
 			}
 		}
 	}
@@ -57,7 +59,8 @@ func main() {
 
 	files, err := ioutil.ReadDir(inputDir)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
 	// sorting
@@ -94,12 +97,13 @@ func main() {
 				// if file ext matches, move the file
 				err := os.Rename(filepath.Join(wk, fn), filepath.Join(od, fn))
 				if err != nil {
-					log.Fatal(err)
+					fmt.Println(err)
+					os.Exit(1)
 				}
 				break
 			}
 		}
 	}
-	// make some folder resolutions, so it doesn't print out .
-	fmt.Printf("Files within %s sorted!\n", inputDir)
+
+	fmt.Println("Files sorted!")
 }
