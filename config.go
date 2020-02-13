@@ -1,39 +1,33 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
+
+	"gopkg.in/yaml.v2"
 )
 
 type config struct {
-	Directories []directory
+	Directories map[string][]string `yaml:"directories"`
 }
 
-type directory struct {
-	Name string   `json:"name"`
-	Ext  []string `json:"ext"`
-}
-
-func readConfig() ([]byte, error) {
+func readConfigFromFile() ([]byte, error) {
 	var content []byte
 	var err error
 
-	// check for user config
+	// search config in 1) home folder, 2) global, 3) current folder
 	home := os.Getenv("HOME")
-	content, err = ioutil.ReadFile(filepath.Join(home, "/.config/gorter_config.json"))
+	content, err = ioutil.ReadFile(filepath.Join(home, "/.config/gorter.yaml"))
 
 	if err != nil {
-		// check for global config
-		content, err = ioutil.ReadFile("/etc/gorter_config.json")
+		content, err = ioutil.ReadFile("/etc/gorter.yaml")
 	}
 
 	if err != nil {
-		// check for config file in current folder
-		content, err = ioutil.ReadFile("./gorter_config.json")
+		content, err = ioutil.ReadFile("./gorter.yaml")
 	}
 
 	if err != nil {
@@ -46,12 +40,17 @@ func readConfig() ([]byte, error) {
 func loadConfig() config {
 	var config config
 
-	content, err := readConfig()
-
+	content, err := readConfigFromFile()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
-	json.Unmarshal(content, &config)
+	err = yaml.Unmarshal(content, &config)
+	if err != nil {
+		fmt.Printf("Error while reading config file!\n %v\n", err)
+		os.Exit(1)
+	}
+
 	return config
 }

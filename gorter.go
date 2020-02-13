@@ -64,7 +64,7 @@ func main() {
 	}
 
 	// sorting
-	for _, dir := range config.Directories {
+	for k, v := range config.Directories {
 		// set working path which contains files to sort
 		var wk string
 		if outputDir != "" {
@@ -72,13 +72,13 @@ func main() {
 		} else {
 			wk = inputDir
 		}
-		od := filepath.Join(wk, dir.Name)
+		od := filepath.Join(wk, k)
 
 		// create directory where to place sorted files
 		_ = os.Mkdir(od, os.ModePerm)
 
 		for _, filename := range files {
-			for _, ext := range dir.Ext {
+			for _, ext := range v {
 				if filename.IsDir() {
 					continue
 				}
