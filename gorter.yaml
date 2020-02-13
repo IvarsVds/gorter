@@ -1,0 +1,19 @@
+directories:
+    - name: Archives
+      ext: [.zip, .rar, .7z, .tar, .tar.gz, .tar.xz]
+    - name: Audio
+      ext: [.mp3, .wav, .flac, .ogg]
+    - name: Books
+      ext: [.epub, .mobi]
+    - name: Disk Images
+      ext: [.iso]
+    - name: Documents
+      ext: [.txt, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx]
+    - name: Guitar tabs
+      ext: [.tg, .gp3, .gp4, .gp5, .gpx]
+    - name: Pictures
+      ext: [.png, .gif, .jpg, .jpeg]
+    - name: Torrent Files
+      ext: [.torrent]
+    - name: Videos
+      ext: [.mp4, .webm, .mkv, .avi]
