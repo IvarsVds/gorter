@@ -1,4 +1,4 @@
-# Gorter version 2.0.1
+# Gorter version 2.0.2
 Gorter is CLI utility for sorting files. It solves a basic need of mine - keeping my home directory (and it's sub directories) organized.  
 Gorter aims to be customizable - users can edit configuration file and define directory names and file types,
 that will be placed in those directories.
