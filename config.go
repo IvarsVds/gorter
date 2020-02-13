@@ -11,12 +11,7 @@ import (
 )
 
 type config struct {
-	Directories []Directory `yaml:"directories"`
-}
-
-type Directory struct {
-	Name string   `yaml:"name"`
-	Ext  []string `yaml:"ext"`
+	Directories map[string][]string `yaml:"directories"`
 }
 
 func readConfigFromFile() ([]byte, error) {
