@@ -3,9 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"gopkg.in/yaml.v2"
 )
@@ -19,15 +19,21 @@ func readConfigFromFile() ([]byte, error) {
 	var err error
 
 	// search config in 1) home folder, 2) global, 3) current folder
-	home := os.Getenv("HOME")
-	content, err = ioutil.ReadFile(filepath.Join(home, "/.config/gorter.yaml"))
-
-	if err != nil {
-		content, err = ioutil.ReadFile("/etc/gorter.yaml")
+	// this seems rather ugly
+	opsys := runtime.GOOS
+	if opsys == "linux" {
+		content, err = os.ReadFile(filepath.Join(os.Getenv("HOME"), "/.config/gorter.yaml"))
+	}
+	if opsys == "darwin" {
+		content, err = os.ReadFile(filepath.Join(os.Getenv("HOME"), "/Library/Preferences/gorter.yaml"))
 	}
 
 	if err != nil {
-		content, err = ioutil.ReadFile("./gorter.yaml")
+		content, err = os.ReadFile("/etc/gorter.yaml")
+	}
+
+	if err != nil {
+		content, err = os.ReadFile("./gorter.yaml")
 	}
 
 	if err != nil {
